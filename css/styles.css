@@ -260,34 +260,32 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 1.35rem;
-  letter-spacing: -0.01em;
 }
 
-.logo-badge {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, #ffffff 0%, #71717a 100%);
-  color: #000000;
-  font-weight: 900;
-  font-size: 1.3rem;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-glow);
+.logo-simple {
+  height: 44px;
+  width: auto;
+  max-width: 180px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.1));
+  transition: transform var(--transition-fast);
 }
 
-.logo-text span {
+.brand-logo:hover .logo-simple {
+  transform: scale(1.03);
+}
+
+.hero-logo-full {
+  max-width: 380px;
+  width: 100%;
+  height: auto;
+  margin: 0 auto 1.5rem auto;
   display: block;
-  font-size: 0.65rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  font-weight: 600;
-  margin-top: -2px;
+  filter: drop-shadow(0 6px 25px rgba(255, 255, 255, 0.15));
+}
+
+#simulador {
+  display: none !important;
 }
 
 /* Nav Links */
@@ -1004,68 +1002,74 @@ h1, h2, h3, h4, h5, h6 {
   filter: grayscale(100%) invert(90%) contrast(120%);
 }
 
-/* --- Modal Lightbox --- */
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--transition-fast);
+/* --- Native HTML5 Dialog Lightbox --- */
+.project-dialog {
+  border: none;
+  background: transparent;
+  padding: 0;
+  max-width: 900px;
+  width: 90%;
+  margin: auto;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-lg);
+  outline: none;
 }
 
-.modal.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.modal-backdrop {
-  position: absolute;
-  inset: 0;
+.project-dialog::backdrop {
   background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: dialogBackdropFade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.modal-content {
+.project-dialog[open] {
+  animation: dialogZoom 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dialogBackdropFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes dialogZoom {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.dialog-container {
   position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-lg);
-  max-width: 900px;
-  width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: var(--shadow-lg);
-  z-index: 1;
   display: grid;
   grid-template-columns: 1.2fr 1fr;
 }
 
-.modal-image-box {
+.dialog-image-box {
   background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.modal-image-box img {
+.dialog-image-box img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.modal-details {
+.dialog-details {
   padding: 2.5rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.modal-close {
+.dialog-close {
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -1080,10 +1084,11 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   font-size: 1.2rem;
   z-index: 2;
+  cursor: pointer;
   transition: all var(--transition-fast);
 }
 
-.modal-close:hover {
+.dialog-close:hover {
   background: var(--accent-white);
   color: #000;
 }
@@ -1216,7 +1221,7 @@ h1, h2, h3, h4, h5, h6 {
     grid-template-columns: 1fr 1fr;
   }
 
-  .modal-content {
+  .dialog-container {
     grid-template-columns: 1fr;
     max-height: 85vh;
   }
@@ -1258,4 +1263,59 @@ h1, h2, h3, h4, h5, h6 {
     width: 52px;
     height: 52px;
   }
+}
+
+/* --- Modern CSS Guidance & Performance Enhancements --- */
+body:has(.mobile-drawer.active) {
+  overflow: hidden;
+}
+
+.form-group:has(.form-input:focus),
+.form-group:has(.form-textarea:focus),
+.form-group:has(.form-select:focus) {
+  position: relative;
+}
+
+.form-group:has(.form-input:focus) .form-label,
+.form-group:has(.form-textarea:focus) .form-label,
+.form-group:has(.form-select:focus) .form-label {
+  color: var(--accent-white);
+}
+
+.field-error-msg {
+  display: none;
+  font-size: 0.78rem;
+  color: #f87171;
+  margin-top: 0.35rem;
+  font-weight: 500;
+}
+
+.form-input.is-invalid, .form-textarea.is-invalid {
+  border-color: #ef4444 !important;
+}
+
+.form-input.is-invalid + .field-error-msg,
+.form-textarea.is-invalid + .field-error-msg {
+  display: block;
+}
+
+.form-input:user-invalid, .form-textarea:user-invalid {
+  border-color: #ef4444;
+}
+
+.section {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 800px;
+}
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.revealed {
+  opacity: 1;
+  transform: translateY(0);
 }
